@@ -7,31 +7,27 @@ import * as authAPI from "../lib/api/auth";
 const CHANGE_FIELD = "auth/CHANGE_FIELD";
 const INITIALIZE_FORM = "auth/INITIALIZE_FORM";
 
-const [REGISTER, REGISTER_SUCCESS, REGISTER_FAILURE] = createRequestActionTypes(
-  "auth/REGISTER"
-);
+const [REGISTER, REGISTER_SUCCESS, REGISTER_FAILURE] = createRequestActionTypes("auth/REGISTER");
 
-const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] = createRequestActionTypes(
-  "auth/LOGIN"
-);
+const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] = createRequestActionTypes("auth/LOGIN");
 
-export const changeField = createAction(
-  CHANGE_FIELD,
-  ({ form, key, value }) => ({
+// const [REISSUE, REISSUE_SUCCESS, REISSUE_FAILURE] = createRequestActionTypes("auth/reissue");
+
+export const changeField = createAction(CHANGE_FIELD, ({ form, key, value }) => ({
   form, //register, login
-  key, //username, password, passwordConfirm
+  key, // id, pw ...
   value, // 바뀌는 값
-  })
-);
+}));
 
 export const initializeForm = createAction(INITIALIZE_FORM, (form) => form); // register, login
 
-export const register = createAction(REGISTER, ({ id, pw, name, email, phone }) => ({
+export const register = createAction(REGISTER, ({ id, pw, name, email, phone, accessToken }) => ({
   id,
   pw,
   name,
   email,
   phone,
+  accessToken,
 }));
 
 export const login = createAction(LOGIN, ({ id, pw }) => ({
@@ -39,11 +35,18 @@ export const login = createAction(LOGIN, ({ id, pw }) => ({
   pw,
 }));
 
+// export const reissue = createAction(REISSUE, ({ accessToken, refreshToken }) => ({
+//   accessToken,
+//   refreshToken,
+// }));
+
 const registerSaga = createRequestSaga(REGISTER, authAPI.register);
 const loginSaga = createRequestSaga(LOGIN, authAPI.login);
+// const reissueSaga = createRequestSaga(REISSUE, authAPI.reissue);
 export function* authSaga() {
   yield takeLatest(REGISTER, registerSaga);
   yield takeLatest(LOGIN, loginSaga);
+  // yield takeLatest(REISSUE, reissueSaga);
 }
 
 const initialState = {
@@ -61,6 +64,8 @@ const initialState = {
   },
   auth: null,
   authError: null,
+  // reissue: null,
+  // reissueError: null,
 };
 
 const auth = handleActions(
@@ -73,6 +78,7 @@ const auth = handleActions(
     [INITIALIZE_FORM]: (state, { payload: form }) => ({
       ...state,
       [form]: initialState[form],
+      auth: null,
       authError: null,
     }),
 
@@ -97,6 +103,17 @@ const auth = handleActions(
       ...state,
       authError: error,
     }),
+
+    // [REISSUE_SUCCESS]: (state, { payload: reissue }) => ({
+    //   ...state,
+    //   reissueError: null,
+    //   reissue,
+    // }),
+
+    // [REISSUE_FAILURE]: (state, { payload: error }) => ({
+    //   ...state,
+    //   reissue: error,
+    // }),
   },
   initialState
 );

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { changeField, initializeForm, login } from "../../modules/auth";
 import AuthForm from "../../components/auth/AuthForm";
-import { check } from "../../modules/user";
+// import { check } from "../../modules/user";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -48,7 +48,19 @@ const LoginForm = () => {
     }
     if (auth) {
       console.log("로그인 성공");
-      dispatch(check());
+      const tokenPair = auth.headers.authorization;
+      const tokens = tokenPair.split(" ");
+      const accessToken = tokens[0];
+      const refreshToken = tokens[1];
+
+      try {
+        localStorage.setItem("AccessToken", accessToken);
+        localStorage.setItem("RefreshToken", refreshToken);
+      } catch (e) {
+        console.log("localStorage is not working");
+      }
+
+      // dispatch(check());
     }
   }, [auth, authError, dispatch]);
 

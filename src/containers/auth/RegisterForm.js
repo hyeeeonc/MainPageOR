@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeField, initializeForm, register } from "../../modules/auth";
 import AuthForm from "../../components/auth/AuthForm";
-import { check } from "../../modules/user";
+// import { check } from "../../modules/user";
 import { useNavigate } from "react-router-dom";
+import Reissue from "../../lib/api/auth";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ const RegisterForm = () => {
 
   // 폼 등록 이벤트 핸들러
   const onSubmit = (e) => {
-
     e.preventDefault();
     const { id, pw, pwConfirm, name, email, phone } = form;
     // 하나라도 비어있다면
@@ -38,14 +38,20 @@ const RegisterForm = () => {
       return;
     }
     // 비밀번호가 일치하지 않는다면
-      if (pw !== pwConfirm) {
-        setError("비밀번호가 일치하지 않습니다.");
-        dispatch(changeField({ form: "register", key: "password", value: "" }));
-        dispatch(changeField({ form: "register", key: "passwordConfirm", value: "" }));
-        return;
-      }
-    dispatch(register({ id, pw, name, email, phone }));
+    if (pw !== pwConfirm) {
+      setError("비밀번호가 일치하지 않습니다.");
+      dispatch(changeField({ form: "register", key: "password", value: "" }));
+      dispatch(changeField({ form: "register", key: "passwordConfirm", value: "" }));
+      return;
+    }
+    const accessToken = localStorage.getItem("AccessToken");
+    if (!accessToken) {
+      setError("로그인이 필요합니다.");
+      return;
+    }
+    dispatch(register({ id, pw, name, email, phone, accessToken }));
   };
+  // const yserid = set[0];
 
   // 컴포넌트가 처음 렌더링 될 때 form 을 초기화함
   useEffect(() => {
@@ -54,13 +60,77 @@ const RegisterForm = () => {
 
   // 회원가입 성공 / 실패 처리
   useEffect(() => {
+    console.log("working");
     if (authError) {
       // 계정명이 이미 존재할 때
-      if (authError.response.status === 409) {
-        setError("이미 존재하는 계정명입니다.");
+      if (authError.response.status === 401) {
+        const accessToken = localStorage.getItem("AccessToken");
+        const refreshToken = localStorage.getItem("RefreshToken");
+
+        if (!accessToken || !refreshToken) {
+          setError("권한이 없습니다.");
+          return;
+        }
+
+        async function setReissue() {
+          const response = await Reissue({ accessToken, refreshToken });
+          if (response.status === 400) {
+            setError("잠시 후 다시 시도해 주세요.");
+            return;
+          } else if (response.status === 401) {
+            setError("권한이 만료되었습니다. 다시 로그인해 주세요.");
+            return;
+          } else if (response.status === 200) {
+            const tokenPair = response.headers.authorization;
+            const tokens = tokenPair.split(" ");
+            const accessToken = tokens[0];
+            const refreshToken = tokens[1];
+
+            try {
+              localStorage.setItem("AccessToken", accessToken);
+              localStorage.setItem("RefreshToken", refreshToken);
+
+              const { id, pw, name, email, phone } = form;
+              dispatch(register({ id, pw, name, email, phone, accessToken }));
+              // };
+              // onSubmit();
+            } catch (e) {
+              console.log("localStorage is not working");
+            }
+            // formRef.current.dispatchEvent(new Event("submit", { cancelable: true }));
+          }
+        }
+        setReissue();
+
         return;
       }
-      // 기타 이유
+
+      if (authError.response.status === 422) {
+        if (authError.response.data.id) {
+          setError(authError.response.data.id);
+          return;
+        }
+
+        if (authError.response.data.pw) {
+          setError(authError.response.data.pw);
+          return;
+        }
+        if (authError.response.data.name) {
+          setError(authError.response.data.name);
+          return;
+        }
+
+        if (authError.response.data.email) {
+          setError(authError.response.data.email);
+          return;
+        }
+
+        if (authError.response.data.phone) {
+          setError(authError.response.data.phone);
+          return;
+        }
+      }
+
       setError("회원가입 실패");
       return;
     }
@@ -68,9 +138,9 @@ const RegisterForm = () => {
     if (auth) {
       console.log("회원가입 성공");
       console.log(auth);
-      dispatch(check());
+      // dispatch(check());
     }
-  }, [auth, authError, dispatch]);
+  }, [form, auth, authError, dispatch]);
 
   // user 값이 잘 설정되었는지 확인
   useEffect(() => {

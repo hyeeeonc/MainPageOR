@@ -3,6 +3,7 @@ import palette from "../../lib/styles/palette";
 import { Link } from "../../../node_modules/react-router-dom/index";
 
 const AuthTemplateBlock = styled.div`
+  overflow-x: hidden;
   position: absolute;
   left: 0;
   top: 0;
