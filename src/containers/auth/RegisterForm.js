@@ -9,6 +9,12 @@ import Reissue from "../../lib/api/auth";
 const RegisterForm = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [idError, setIdError] = useState(null);
+  const [pwError, setPwError] = useState(null);
+  const [nameError, setNameError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [phoneError, setPhoneError] = useState(null);
+
   const dispatch = useDispatch();
   const { form, auth, authError, user } = useSelector(({ auth, user }) => ({
     form: auth.register,
@@ -60,7 +66,6 @@ const RegisterForm = () => {
 
   // 회원가입 성공 / 실패 처리
   useEffect(() => {
-    console.log("working");
     if (authError) {
       // 계정명이 이미 존재할 때
       if (authError.response.status === 401) {
@@ -106,32 +111,15 @@ const RegisterForm = () => {
       }
 
       if (authError.response.status === 422) {
-        if (authError.response.data.id) {
-          setError(authError.response.data.id);
-          return;
-        }
-
-        if (authError.response.data.pw) {
-          setError(authError.response.data.pw);
-          return;
-        }
-        if (authError.response.data.name) {
-          setError(authError.response.data.name);
-          return;
-        }
-
-        if (authError.response.data.email) {
-          setError(authError.response.data.email);
-          return;
-        }
-
-        if (authError.response.data.phone) {
-          setError(authError.response.data.phone);
-          return;
-        }
+        setIdError(authError.response.data.id);
+        setPwError(authError.response.data.pw);
+        setNameError(authError.response.data.name);
+        setEmailError(authError.response.data.email);
+        setPhoneError(authError.response.data.phone);
+        return;
       }
 
-      setError("회원가입 실패");
+      setError("일시적인 오류가 발생했습니다");
       return;
     }
 
@@ -154,7 +142,20 @@ const RegisterForm = () => {
     }
   }, [navigate, user]);
 
-  return <AuthForm type="register" form={form} onChange={onChange} onSubmit={onSubmit} error={error} />;
+  return (
+    <AuthForm
+      type="register"
+      form={form}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      error={error}
+      idError={idError}
+      pwError={pwError}
+      nameError={nameError}
+      emailError={emailError}
+      phoneError={phoneError}
+    />
+  );
 };
 
 export default RegisterForm;

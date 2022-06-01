@@ -57,7 +57,7 @@ const ErrorMessage = styled.div`
   font-weight: bold;
 `;
 
-const AuthForm = ({ type, form, onChange, onSubmit, error }) => {
+const AuthForm = ({ type, form, onChange, onSubmit, error, idError, pwError, nameError, emailError, phoneError }) => {
   const formRef = useRef();
 
   const text = textMap[type];
@@ -66,18 +66,23 @@ const AuthForm = ({ type, form, onChange, onSubmit, error }) => {
       <h3>{text}</h3>
       <form name={text} onSubmit={onSubmit} ref={formRef}>
         <StyledInput autoComplete="username" name="id" placeholder="ID" onChange={onChange} value={form.id} />
+        {idError && <ErrorMessage>{idError}</ErrorMessage>}
 
         <StyledInput autoComplete="new-password" name="pw" placeholder="Password" type="password" onChange={onChange} value={form.pw} />
+        {pwError && <ErrorMessage>{pwError}</ErrorMessage>}
 
         {type === "register" && (
           <>
             <StyledInput autoComplete="new-password" name="pwConfirm" placeholder="Check Password" type="password" onChange={onChange} value={form.pwConfirm} />
 
             <StyledInput autoComplete="name" name="name" placeholder="Name" onChange={onChange} value={form.name} />
+            {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
 
             <StyledInput autoComplete="email" name="email" placeholder="E-Mail" onChange={onChange} value={form.email} />
+            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
 
             <StyledInput autoComplete="tel" name="phone" placeholder="Phone Number" onChange={onChange} value={form.phone} />
+            {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
           </>
         )}
 

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Responsive from "./Responsive";
 import Button from "./Button";
+import { Link } from "../../../node_modules/react-router-dom/index";
 
 const HeaderBlock = styled.div`
   position: fixed;
@@ -13,9 +14,9 @@ const Wrapper = styled(Responsive)`
   height: 85px;
   display: flex;
   align-items: center;
-  justify-contents: space-between;
+  justify-content: space-between;
   .logo {
-    font-size: 1.2rem;
+    font-size: 3rem;
     font-weight: bold;
   }
   .right {
@@ -33,9 +34,12 @@ const Header = () => {
     <>
       <HeaderBlock>
         <Wrapper>
-          <div className="logo">OKRA SEOUL</div>
+          <Link to="/" className="logo">
+            OKRA SEOUL
+          </Link>
           <div className="right">
-            <Button>Sign In</Button>
+            if() {}
+            <Button to="/login">Sign In</Button>
           </div>
         </Wrapper>
       </HeaderBlock>

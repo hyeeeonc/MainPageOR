@@ -3,15 +3,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { changeField, initializeForm, login } from "../../modules/auth";
 import AuthForm from "../../components/auth/AuthForm";
+// import { check } from "../../modules/user";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { form, auth, authError } = useSelector(({ auth }) => ({
+  const { form, auth, authError, user } = useSelector(({ auth, user }) => ({
     form: auth.login,
     auth: auth.auth,
     authError: auth.authError,
+    user: user.user,
   }));
   // 인풋 변경 이벤트 핸들러
   const onChange = (e) => {
@@ -50,25 +52,23 @@ const LoginForm = () => {
       const tokens = tokenPair.split(" ");
       const accessToken = tokens[0];
       const refreshToken = tokens[1];
-      const { id } = form;
 
       try {
         localStorage.setItem("AccessToken", accessToken);
         localStorage.setItem("RefreshToken", refreshToken);
-        localStorage.setItem("ID", id);
       } catch (e) {
         console.log("localStorage is not working");
       }
 
       // dispatch(check());
     }
-  }, [auth, form, authError, dispatch]);
+  }, [auth, authError, dispatch]);
 
   useEffect(() => {
     if (localStorage.getItem("AccessToken")) {
       navigate("/");
     }
-  }, [auth, navigate]);
+  }, [auth]);
 
   return <AuthForm type="login" form={form} onChange={onChange} onSubmit={onSubmit} error={error} />;
 };
