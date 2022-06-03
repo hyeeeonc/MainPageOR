@@ -12,12 +12,30 @@ import rootReducer, { rootSaga } from "./modules/index";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(
-  rootReducer,
-  composeWithDevTools(applyMiddleware(sagaMiddleware))
-);
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+
+function loadUser() {
+  const token = localStorage.getItem("RefreshToken");
+  try {
+    if (!token) {
+      localStorage.clear();
+      return;
+    } else {
+      const tokenPayload = JSON.parse(decodeURIComponent(escape(atob(token.split(".")[1]))));
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (currentTime > tokenPayload.exp) {
+        localStorage.clear();
+        return;
+      }
+      return;
+    }
+  } catch (e) {
+    console.log("localStorage is not working");
+  }
+}
 
 sagaMiddleware.run(rootSaga);
+loadUser();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

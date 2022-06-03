@@ -35,6 +35,15 @@ export const login = createAction(LOGIN, ({ id, pw }) => ({
   pw,
 }));
 
+export function logout() {
+  try {
+    localStorage.clear();
+    window.location.replace("/");
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 // export const reissue = createAction(REISSUE, ({ accessToken, refreshToken }) => ({
 //   accessToken,
 //   refreshToken,

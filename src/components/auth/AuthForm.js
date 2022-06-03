@@ -89,7 +89,7 @@ const AuthForm = ({ type, form, onChange, onSubmit, error, idError, pwError, nam
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <ButtonWithMarginTop fullWidth>{text}</ButtonWithMarginTop>
       </form>
-      <Footer>{type === "login" ? <Link to="/register">Add Administrator</Link> : <Link to="/login">Sign In</Link>}</Footer>
+      <Footer>{type === "login" ? <></> : <Link to="/">Home</Link>}</Footer>
     </AuthFormBlock>
   );
 };
