@@ -67,7 +67,6 @@ const RegisterForm = () => {
   // 회원가입 성공 / 실패 처리
   useEffect(() => {
     if (authError) {
-      // 계정명이 이미 존재할 때
       if (authError.response.status === 401) {
         const accessToken = localStorage.getItem("AccessToken");
         const refreshToken = localStorage.getItem("RefreshToken");
@@ -97,12 +96,9 @@ const RegisterForm = () => {
 
               const { id, pw, name, email, phone } = form;
               dispatch(register({ id, pw, name, email, phone, accessToken }));
-              // };
-              // onSubmit();
             } catch (e) {
               console.log("localStorage is not working");
             }
-            // formRef.current.dispatchEvent(new Event("submit", { cancelable: true }));
           }
         }
         setReissue();
@@ -119,7 +115,7 @@ const RegisterForm = () => {
         return;
       }
 
-      setError("일시적인 오류가 발생했습니다");
+      setError("일시적인 오류가 발생했습니다 잠시 후 다시 시도해 주세요.");
       return;
     }
 

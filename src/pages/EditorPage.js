@@ -1,15 +1,15 @@
-import Editor from "../components/editor/Editor";
 import Responsive from "../components/common/Responsive";
 import HeaderContainer from "../containers/common/HeaderContainer";
-import WriteActionButtons from "../components/editor/WriteActionButtons";
+import EditorContainer from "../containers/write/EditorContainer";
+import WriteActionButtonsContainer from "../containers/write/WriteActionButtonsContainer";
 
 const EditorPage = () => {
   return (
     <>
       <HeaderContainer />
       <Responsive>
-        <Editor />
-        <WriteActionButtons />
+        <EditorContainer />
+        <WriteActionButtonsContainer />
       </Responsive>
     </>
   );

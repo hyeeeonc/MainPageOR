@@ -4,7 +4,7 @@ import Button from "../common/Button";
 
 const WriteActionButtonsBlock = styled.div`
   display: flex;
-  align-items: right;
+  justify-content: right;
   margin-top: 1rem;
   margin-bottom: 3rem;
   button + button {
@@ -20,12 +20,11 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const WriteActionButtons = ({ onCancel, onPublish, isEdit }) => {
+const WriteActionButtons = ({ onCancel, onPublish, onTemporary, isEdit }) => {
   return (
     <WriteActionButtonsBlock>
-      <StyledButton cyan onClick={onPublish}>
-        Post {isEdit ? "수정" : "등록"}
-      </StyledButton>
+      <StyledButton onClick={onPublish}>Post {isEdit ? "수정" : "등록"}</StyledButton>
+      <StyledButton onClick={onTemporary}>임시저장</StyledButton>
       <StyledButton onClick={onCancel}>취소</StyledButton>
     </WriteActionButtonsBlock>
   );
