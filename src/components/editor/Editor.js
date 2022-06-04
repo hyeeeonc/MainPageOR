@@ -1,5 +1,6 @@
+import React from "react";
 import { useRef, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "../../../node_modules/react-redux/es/exports";
+import { useDispatch } from "../../../node_modules/react-redux/es/exports";
 import Quill from "quill";
 // import { Quill } from "../../../node_modules/quill/dist/quill";
 import "quill/dist/quill.snow.css";
@@ -7,6 +8,7 @@ import styled from "styled-components";
 import palette from "../../lib/styles/palette";
 import Responsive from "../common/Responsive";
 import client from "../../lib/api/client";
+import Reissue from "../../lib/api/auth";
 import { changefield } from "../../modules/write";
 
 const EditorBlock = styled(Responsive)`
@@ -35,9 +37,32 @@ const QuillWrapper = styled.div`
   }
 `;
 
-const Editor = ({ title, content, onChangeField }) => {
+const QuillThumbWrapper = styled.div`
+  margin-top: 1rem;
+  width: 300px;
+  .ql-editor {
+    padding: 0;
+    min-height: 30px;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  .ql-editor .ql-blank::before {
+    left: 0px;
+  }
+`;
+
+const BottomContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
   const quillElement = useRef(null);
   const quillInstance = useRef(null);
+  const quillThumbElement = useRef(null);
+  const quillThumbInstance = useRef(null);
+
   const [addresses, setAddresses] = useState([]);
   const dispatch = useDispatch();
 
@@ -55,22 +80,157 @@ const Editor = ({ title, content, onChangeField }) => {
       formData.append("file", file);
 
       try {
-        const result = await client.post("/api/v1/image/upload", formData);
+        const accessToken = localStorage.getItem("AccessToken");
+        const result = await client.post("/api/v1/image/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: accessToken,
+          },
+        });
+
         const IMG_URL = result.data.url;
-        console.log(IMG_URL);
-        addresses.push(IMG_URL);
+        const IMG_FILE = result.data.file;
+        addresses.push(IMG_FILE);
+        console.log(addresses);
+        dispatch(changefield({ key: "address", value: addresses }));
 
         const quill = quillInstance.current; // 에디터 객체 가져오기
         // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
         const range = quill.getSelection();
         // 가져온 위치에 이미지를 삽입한다
         quill.insertEmbed(range.index, "image", IMG_URL);
+
         // let copyAddresses = [...addresses];
         // console.log(copyAddresses);
         // setAddresses(copyAddresses);
 
         console.log(addresses);
       } catch (error) {
+        const accessToken = localStorage.getItem("AccessToken");
+        const refreshToken = localStorage.getItem("RefreshToken");
+
+        async function setReissue() {
+          const response = await Reissue({ accessToken, refreshToken });
+          if (response.status === 400) {
+            // setError("잠시 후 다시 시도해 주세요.");
+            return;
+          } else if (response.status === 401) {
+            // setError("권한이 만료되었습니다. 다시 로그인해 주세요.");
+            return;
+          } else if (response.status === 200) {
+            const tokenPair = response.headers.authorization;
+            const tokens = tokenPair.split(" ");
+            const accessToken = tokens[0];
+
+            try {
+              localStorage.setItem("AccessToken", accessToken);
+
+              const result = await client.post("/api/v1/image/upload", formData, {
+                headers: {
+                  // "Content-Type": "multipart/form-data",
+                  Authorization: accessToken,
+                },
+              });
+
+              const IMG_URL = result.data.url;
+              const IMG_FILE = result.data.file;
+              addresses.push(IMG_FILE);
+              dispatch(changefield({ key: "address", value: addresses }));
+
+              const quill = quillInstance.current; // 에디터 객체 가져오기
+              // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
+              const range = quill.getSelection();
+              // 가져온 위치에 이미지를 삽입한다
+              quill.insertEmbed(range.index, "image", IMG_URL);
+            } catch (e) {
+              console.log("localStorage is not working");
+            }
+          }
+        }
+        setReissue();
+
+        console.log(error);
+      }
+    });
+  };
+
+  const imageThumbHandler = () => {
+    const input = document.createElement("input");
+
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.addEventListener("change", async () => {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const accessToken = localStorage.getItem("AccessToken");
+        const result = await client.post("/api/v1/image/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: accessToken,
+          },
+        });
+
+        const IMG_URL = result.data.url;
+        addresses.push(IMG_URL);
+
+        const quill = quillThumbInstance.current; // 에디터 객체 가져오기
+        // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
+        const range = quill.getSelection();
+        // 가져온 위치에 이미지를 삽입한다
+        quill.insertEmbed(range.index, "image", IMG_URL);
+
+        // let copyAddresses = [...addresses];
+        // console.log(copyAddresses);
+        // setAddresses(copyAddresses);
+
+        console.log(addresses);
+      } catch (error) {
+        const accessToken = localStorage.getItem("AccessToken");
+        const refreshToken = localStorage.getItem("RefreshToken");
+
+        async function setReissue() {
+          const response = await Reissue({ accessToken, refreshToken });
+          if (response.status === 400) {
+            // setError("잠시 후 다시 시도해 주세요.");
+            return;
+          } else if (response.status === 401) {
+            // setError("권한이 만료되었습니다. 다시 로그인해 주세요.");
+            return;
+          } else if (response.status === 200) {
+            const tokenPair = response.headers.authorization;
+            const tokens = tokenPair.split(" ");
+            const accessToken = tokens[0];
+
+            try {
+              localStorage.setItem("AccessToken", accessToken);
+
+              const result = await client.post("/api/v1/image/upload", formData, {
+                headers: {
+                  // "Content-Type": "multipart/form-data",
+                  Authorization: accessToken,
+                },
+              });
+
+              const IMG_URL = result.data.url;
+              addresses.push(IMG_URL);
+
+              const quill = quillThumbInstance.current; // 에디터 객체 가져오기
+              // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
+              const range = quill.getSelection();
+              // 가져온 위치에 이미지를 삽입한다
+              quill.insertEmbed(range.index, "image", IMG_URL);
+            } catch (e) {
+              console.log("localStorage is not working");
+            }
+          }
+        }
+        setReissue();
+
         console.log(error);
       }
     });
@@ -111,10 +271,28 @@ const Editor = ({ title, content, onChangeField }) => {
     });
 
     const quill = quillInstance.current;
-    quill.on("text-change", (delta, oldDelta, source) => {
-      if (source === "user") {
-        onChangeField({ key: "content", value: quill.root.innerHTML });
-      }
+    quill.on("text-change", (delta, oldDelta) => {
+      onChangeField({ key: "content", value: quill.root.innerHTML });
+    });
+  }, [onChangeField]);
+
+  useEffect(() => {
+    quillThumbInstance.current = new Quill(quillThumbElement.current, {
+      theme: "snow",
+      placeholder: "썸네일 등록",
+      modules: {
+        toolbar: {
+          container: [["image"]],
+          handlers: {
+            image: imageThumbHandler,
+          },
+        },
+      },
+    });
+
+    const quill = quillThumbInstance.current;
+    quill.on("text-change", (delta, oldDelta) => {
+      onChangeField({ key: "thumbnail", value: quill.root.innerHTML });
     });
   }, [onChangeField]);
 
@@ -122,12 +300,35 @@ const Editor = ({ title, content, onChangeField }) => {
     onChangeField({ key: "title", value: e.target.value });
   };
 
+  const onChangeBoardId = (e) => {
+    onChangeField({ key: "boardId", value: e.target.value });
+  };
+
   return (
     <EditorBlock>
       <TitleInput placeholder="Title" onChange={onChangeTitle} value={title} />
+
       <QuillWrapper>
         <div ref={quillElement} />
       </QuillWrapper>
+
+      <BottomContainer>
+        <QuillThumbWrapper>
+          <div ref={quillThumbElement} />
+        </QuillThumbWrapper>
+        <select name="BoardId" onChange={onChangeBoardId} value={BoardId}>
+          <option value="1">Festival</option>
+          <option value="2">Concerts</option>
+          <option value="3">Party</option>
+        </select>
+      </BottomContainer>
+
+      {/* <input type="checkbox" vlaue="2">
+        Concerts
+      </input>
+      <input type="checkbox" vlaue="3">
+        Party
+      </input> */}
     </EditorBlock>
   );
 };

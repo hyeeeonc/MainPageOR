@@ -31,7 +31,8 @@ const initialState = {
   title: "",
   thumbnail: "asdfsadf",
   content: "",
-  status: true,
+  status: "",
+  address: [],
   post: null,
   postError: null,
 };

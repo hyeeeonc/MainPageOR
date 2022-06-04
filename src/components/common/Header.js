@@ -6,6 +6,7 @@ import { logout } from "../../modules/auth";
 
 const HeaderBlock = styled.div`
   position: fixed;
+  z-index: 5;
   width: 100%;
   background: black;
   color: white;
@@ -37,6 +38,7 @@ const UserInfo = styled.div`
 
 const LocalNavBlock = styled.div`
   position: fixed;
+  z-index: 5;
   top: 86px;
   width: 100%;
   background: black;

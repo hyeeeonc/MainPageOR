@@ -5,7 +5,7 @@ import { changefield, initialize } from "../../modules/write";
 
 const EditorContainer = () => {
   const dispatch = useDispatch();
-  const { boardId, title, thumbnail, content, status } = useSelector(({ write }) => ({
+  const { boardId, title, thumbnail, content } = useSelector(({ write }) => ({
     boardId: write.boardId,
     title: write.title,
     thumbnail: write.thumbnail,
@@ -22,7 +22,7 @@ const EditorContainer = () => {
     };
   }, [dispatch]);
 
-  return <Editor onChangeField={onChangeField} title={title} content={content} />;
+  return <Editor onChangeField={onChangeField} title={title} content={content} thumbnail={thumbnail} boardId={boardId} />;
 };
 
 export default EditorContainer;
