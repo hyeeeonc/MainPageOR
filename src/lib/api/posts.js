@@ -23,6 +23,13 @@ export const readPost = (id) => {
     },
   });
 };
-// export const imagePost = ({FormData})
 
-// "api/vi/image/upload"
+export const listPosts = ({ size, page, boardId }) => {
+  const accessToken = localStorage.getItem("AccessToken");
+  return client.get("api/v1/posts", {
+    params: { size, page, boardId },
+    headers: {
+      Authorization: accessToken,
+    },
+  });
+};

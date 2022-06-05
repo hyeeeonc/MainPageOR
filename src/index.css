@@ -17,6 +17,8 @@ body {
   background-color: #181818;
   overflow-x: hidden;
 }
+/* @media (max-width: 500px) {
+} */
 
 #root {
   min-height: 100%;

@@ -26,9 +26,9 @@ const PostContainer = styled.div`
     max-width: 100%;
   }
 `;
-
 const PostViewer = ({ post, error, postId, loading }) => {
   // const dispatch = useDispatch();
+
   useEffect(() => {
     if (error) {
       if (error.response.status === 404) {
