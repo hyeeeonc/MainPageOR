@@ -197,7 +197,10 @@ const WriteActionButtonsContainer = () => {
 
   useEffect(() => {
     if (post) {
-      console.log("post성공");
+      const id = post.data.postId;
+
+      console.log(id);
+      navigate(`/${id}`);
     }
     if (postError) {
       if (postError.response.status === 400) {

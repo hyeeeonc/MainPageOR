@@ -44,7 +44,7 @@ const PostItemBlock = styled.div`
     }
   }
 
-  p {
+  .cont {
     margin-left: 10px;
     margin-top: 2rem;
   }
@@ -54,11 +54,13 @@ const PostItem = () => {
   return (
     <PostItemBlock>
       <div className="thumbnail">
-        <img src="http://49.50.174.103:3000/images/6c6b33ac-7be4-4f4b-a328-0f758b8d14ef.png" alt="thumb" />
+        <p>
+          <img src="http://49.50.174.103:3000/images/6c6b33ac-7be4-4f4b-a328-0f758b8d14ef.png" alt="thumb" />
+        </p>
       </div>
       <h6>Festival</h6>
       <h2>제목</h2>
-      <p>내용~~~~</p>
+      <p className="cont">내용~~~~</p>
     </PostItemBlock>
   );
 };
@@ -67,6 +69,10 @@ const PostList = () => {
   return (
     <>
       <PostListBlock>
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
         <PostItem />
         <PostItem />
         <PostItem />
