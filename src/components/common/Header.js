@@ -14,14 +14,26 @@ const HeaderBlock = styled.div`
 `;
 
 const Wrapper = styled(Responsive)`
+  font-family: "Noto Sans KR", sans-serif;
+
   height: 85px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   .logo {
-    font-size: 3rem;
-    font-weight: bold;
-    letter-spacing: -0.5px;
+    font-size: 3.2rem;
+    letter-spacing: -3px;
+
+    .logof {
+      font-weight: 900;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    }
+
+    .logob {
+      font-weight: 600;
+      font-style: italic;
+    }
   }
   .right {
     display: flex;
@@ -57,6 +69,11 @@ const LocalNavLink = styled(Link)`
   font-weight: 600;
 `;
 
+const LocalNavA = styled.a`
+  font-size: 0.8rem;
+  font-weight: 600;
+`;
+
 const Spacer130 = styled.div`
   height: 130px;
 `;
@@ -71,7 +88,8 @@ const Header = ({ user }) => {
       <HeaderBlock>
         <Wrapper>
           <Link to="/" className="logo">
-            OKRASEOUL
+            <span className="logof">OKRA</span>
+            <span className="logob">SEOUL</span>
           </Link>
           {user ? (
             <div className="right">
@@ -91,6 +109,9 @@ const Header = ({ user }) => {
             <LocalNavWrapper>
               <LocalNavLink to="/editor">New Post</LocalNavLink>
               <LocalNavLink to="#">Google analytics</LocalNavLink>
+              <LocalNavA target="_blank" href="https://ssulahome.com">
+                Client Page
+              </LocalNavA>
               <LocalNavLink to="/register">Add Administrator</LocalNavLink>
             </LocalNavWrapper>
           </LocalNavBlock>

@@ -4,6 +4,7 @@ import { useDispatch } from "../../../node_modules/react-redux/es/exports";
 import Quill from "quill";
 // import { Quill } from "../../../node_modules/quill/dist/quill";
 import "quill/dist/quill.snow.css";
+import "quill/dist/quill.core.css";
 import styled from "styled-components";
 import palette from "../../lib/styles/palette";
 import Responsive from "../common/Responsive";
@@ -12,15 +13,16 @@ import Reissue from "../../lib/api/auth";
 import { changefield } from "../../modules/write";
 
 const EditorBlock = styled(Responsive)`
-  padding: 5rem 0;
+  padding: 2rem 0 5rem 0;
 `;
 
 const TitleInput = styled.input`
   font-size: 3rem;
   outline: none;
-  padding: 0.5rem 0;
+  padding: 3rem 0;
   border: none;
-  border-bottom: 1px solid ${palette.gray[4]};
+  border-bottom: 5px solid ${palette.gray[2]};
+
   margin-bottom: 2rem;
   width: 100%;
 `;
@@ -55,6 +57,11 @@ const BottomContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  select {
+    @media (min-width: 1024px) {
+      font-size: 1rem;
+    }
+  }
 `;
 
 const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {

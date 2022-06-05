@@ -14,6 +14,15 @@ export const writePost = ({ boardId, title, thumbnail, content, status }) => {
   );
 };
 
+export const readPost = (id) => {
+  const accessToken = localStorage.getItem("AccessToken");
+
+  return client.get(`api/v1/posts/${id}`, {
+    headers: {
+      Authorization: accessToken,
+    },
+  });
+};
 // export const imagePost = ({FormData})
 
 // "api/vi/image/upload"

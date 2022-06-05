@@ -20,19 +20,7 @@ const WriteActionButtonsContainer = () => {
     post: write.post,
     postError: write.postError,
   }));
-
-  const onPublish = async () => {
-    dispatch(changefield({ key: "status", value: true }));
-    status = true;
-    dispatch(
-      writePost({
-        boardId,
-        title,
-        thumbnail,
-        content,
-        status,
-      })
-    );
+  const imageClear = async () => {
     const notIncludedAddresses = addresses.filter((addr) => !content.includes(addr));
     console.log(notIncludedAddresses);
     const accessToken = localStorage.getItem("AccessToken");
@@ -83,7 +71,7 @@ const WriteActionButtonsContainer = () => {
           try {
             localStorage.setItem("AccessToken", accessToken);
 
-            const response = await client.post("/api/v1/image/delete", notIncludedAddresses, {
+            const deleteApi = await client.post("/api/v1/image/delete", notIncludedAddresses, {
               headers: {
                 "Content-Type": "application/json",
                 Authorization: accessToken,
@@ -100,7 +88,21 @@ const WriteActionButtonsContainer = () => {
 
       return;
     }
+  };
 
+  const onPublish = async () => {
+    dispatch(changefield({ key: "status", value: true }));
+    status = true;
+    dispatch(
+      writePost({
+        boardId,
+        title,
+        thumbnail,
+        content,
+        status,
+      })
+    );
+    imageClear();
     // addresses.map(async (a) => {
 
     // })
@@ -118,6 +120,7 @@ const WriteActionButtonsContainer = () => {
         status,
       })
     );
+    imageClear();
 
     // addresses.map(async (a) => {
 
