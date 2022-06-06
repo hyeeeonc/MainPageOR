@@ -8,7 +8,7 @@ const MainResponsiveBlock = styled.div`
   margin: 3rem auto;
   padding-bottom: 8rem;
   background-color: white;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
 
   width: 1380px;
 
