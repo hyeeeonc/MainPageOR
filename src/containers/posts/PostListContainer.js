@@ -15,7 +15,7 @@ const PostListContainer = () => {
   }));
 
   useEffect(() => {
-    const size = 5;
+    const size = 20;
     const page = parseInt(searchParams.get("page"), 10) || 1;
     // const boardId = null;
 
@@ -52,7 +52,7 @@ const PostListContainer = () => {
             try {
               localStorage.setItem("AccessToken", accessToken);
               localStorage.setItem("RefreshToken", refreshToken);
-              const size = 5;
+              const size = 20;
 
               const page = parseInt(searchParams.get("page"), 10) || 1;
 

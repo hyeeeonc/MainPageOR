@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import { readPost, unloadPost } from "../../modules/post";
 import PostViewer from "../../components/post/PostViewer";
 import Reissue from "../../lib/api/auth";
+import PostAcitonButtons from "../../components/post/PostActionButtons";
 
 const PostViewerContainer = () => {
   const { postId } = useParams();
@@ -63,15 +64,7 @@ const PostViewerContainer = () => {
       }
     }
   }, [error, dispatch, postId]);
-  return (
-    <PostViewer
-      post={post}
-      loading={loading}
-      error={error}
-      postId={postId}
-      // actionButtons={<PostAciton></PostAciton>}
-    />
-  );
+  return <PostViewer post={post} loading={loading} error={error} postId={postId} actionButtons={<PostAcitonButtons />} />;
 };
 
 export default PostViewerContainer;

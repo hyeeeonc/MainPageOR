@@ -24,6 +24,7 @@ const posts = handleActions(
       ...state,
       posts,
       lastPage: posts.data.pageCount,
+      error: null,
     }),
     [LIST_POSTS_FAILURE]: (state, { payload: error }) => ({
       ...state,

@@ -26,7 +26,7 @@ const PostContainer = styled.div`
     max-width: 100%;
   }
 `;
-const PostViewer = ({ post, error, postId, loading }) => {
+const PostViewer = ({ post, error, postId, loading, actionButtons }) => {
   // const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,6 +52,7 @@ const PostViewer = ({ post, error, postId, loading }) => {
       <PostHead>
         <h1>{title}</h1>
       </PostHead>
+      {actionButtons}
       <PostContainer className="view ql-editor" dangerouslySetInnerHTML={{ __html: content }} />
     </PostViewerBlock>
   );

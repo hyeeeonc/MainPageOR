@@ -77,19 +77,22 @@ const PostItemBlock = styled.div`
 
 const PostItem = ({ post }) => {
   const { postId, boardId, title, thumbnail, content, addedDate, status, selected, views } = post;
-  // let events;
-  // if (boardId === 1) {
-  //   const events = "Festival";
-  //   return events;
-  // }
-  // if (boardId === 2) {
-  //   const events = "Concerts";
-  //   return events;
-  // }
-  // if (boardId === 3) {
-  //   const events = "Party";
-  //   return events;
-  // }
+
+  let events;
+
+  const eventSetting = () => {
+    if (boardId === 1) {
+      events = "Festival";
+    }
+    if (boardId === 2) {
+      events = "Concerts";
+    }
+    if (boardId === 3) {
+      events = "Party";
+    }
+    return events;
+  };
+  eventSetting();
 
   // console.log(thumbnail);
   return (
@@ -97,7 +100,7 @@ const PostItem = ({ post }) => {
       <Link to={`/${postId}`}>
         <div className="thumbnail" dangerouslySetInnerHTML={{ __html: thumbnail }}></div>
       </Link>
-      <h6>{boardId}</h6>
+      <h6>{events}</h6>
 
       <Link to={`/${postId}`}>
         <h2>{title}</h2>
