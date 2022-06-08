@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Responsive from "./Responsive";
 import Button from "./Button";
 import { Link } from "../../../node_modules/react-router-dom/index";
-import { logout } from "../../modules/auth";
+import { doLogout } from "../../modules/auth";
 
 const HeaderBlock = styled.div`
   position: fixed;
@@ -94,7 +94,7 @@ const Header = ({ user }) => {
           {user ? (
             <div className="right">
               <UserInfo>{user}</UserInfo>
-              <Button onClick={logout}>Sign Out</Button>
+              <Button onClick={doLogout}>Sign Out</Button>
             </div>
           ) : (
             <div className="right">
@@ -109,7 +109,7 @@ const Header = ({ user }) => {
             <LocalNavWrapper>
               <LocalNavLink to="/editor">New Post</LocalNavLink>
               <LocalNavLink to="#">Google analytics</LocalNavLink>
-              <LocalNavA target="_blank" href="https://ssulahome.com">
+              <LocalNavA target="_blank" href="https://okraseoul.com">
                 Client Page
               </LocalNavA>
               <LocalNavLink to="/register">Add Administrator</LocalNavLink>

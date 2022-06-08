@@ -3,6 +3,7 @@ import produce from "immer";
 import { takeLatest } from "redux-saga/effects";
 import createRequestSaga, { createRequestActionTypes } from "../lib/createRequestSaga";
 import * as authAPI from "../lib/api/auth";
+import { logout } from "../lib/api/auth";
 
 const CHANGE_FIELD = "auth/CHANGE_FIELD";
 const INITIALIZE_FORM = "auth/INITIALIZE_FORM";
@@ -35,14 +36,18 @@ export const login = createAction(LOGIN, ({ id, pw }) => ({
   pw,
 }));
 
-export function logout() {
+export const doLogout = async () => {
   try {
+    await logout();
     localStorage.clear();
+
     window.location.replace("/");
   } catch (e) {
-    console.log(e);
+    localStorage.clear();
+    alert("일시적인 오류가 발생했습니다.");
+    window.location.replace("/");
   }
-}
+};
 
 // export const reissue = createAction(REISSUE, ({ accessToken, refreshToken }) => ({
 //   accessToken,

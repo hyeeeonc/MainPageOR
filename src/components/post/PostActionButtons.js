@@ -24,11 +24,20 @@ const ActionButton = styled.button`
   }
 `;
 
-const PostAcitonButtons = () => {
+const PostAcitonButtons = ({ onEdit, onRemove }) => {
+  const onRemoveClick = () => {
+    const removeComfirm = window.confirm("삭제하시겠습니까?");
+    if (removeComfirm) {
+      onRemove();
+    } else {
+      return;
+    }
+  };
+
   return (
     <PostActionButtonsBlock>
-      <ActionButton>수정</ActionButton>
-      <ActionButton>삭제</ActionButton>
+      <ActionButton onClick={onEdit}>수정</ActionButton>
+      <ActionButton onClick={onRemoveClick}>삭제</ActionButton>
     </PostActionButtonsBlock>
   );
 };

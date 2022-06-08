@@ -4,30 +4,48 @@ import * as postsAPI from "../lib/api/posts";
 import { takeLatest } from "redux-saga/effects";
 
 const INITIALIZE = "write/INITIALIZE";
+const INITIALERROR = "write/INITIALERROR";
+
 const CHANGE_FIELD = "write/CHANGE_FIELD";
 const [WRITE_POST, WRITE_POST_SUCCESS, WRITE_POST_FAILURE] = createRequestActionTypes("write/WRITE_POST");
+const [UPDATE_POST, UPDATE_POST_SUCCESS, UPDATE_POST_FAILURE] = createRequestActionTypes(`write/UPDATE_POST`);
 
 const SET_ORIGINAL_POST = `write_SET_ORIGINAL_POST`;
 
 export const initialize = createAction(INITIALIZE);
+export const initialError = createAction(INITIALERROR);
+
 export const changefield = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
 }));
 
-export const writePost = createAction(WRITE_POST, ({ boardId, title, thumbnail, content, status }) => ({
+export const writePost = createAction(WRITE_POST, ({ boardId, title, thumbnail, content, selected, status }) => ({
   boardId,
   title,
   thumbnail,
   content,
+  selected,
   status,
 }));
 
 export const setOriginalPost = createAction(SET_ORIGINAL_POST, (post) => post);
 
+export const updatePost = createAction(UPDATE_POST, ({ id, title, thumbnail, content, selected, status }) => ({
+  id,
+  title,
+  thumbnail,
+  content,
+  selected,
+  status,
+}));
+
 const writePostSaga = createRequestSaga(WRITE_POST, postsAPI.writePost);
+const updatePostSaga = createRequestSaga(UPDATE_POST, postsAPI.updatePost);
+
 export function* writeSaga() {
   yield takeLatest(WRITE_POST, writePostSaga);
+  yield takeLatest(UPDATE_POST, updatePostSaga);
 }
 
 const initialState = {
@@ -35,6 +53,7 @@ const initialState = {
   title: "",
   thumbnail: "",
   content: "",
+  selected: false,
   status: "",
   address: [],
   post: null,
@@ -42,9 +61,14 @@ const initialState = {
   originalPostId: null,
 };
 
+export const initialErrorr = {
+  postError: null,
+};
+
 const write = handleActions(
   {
     [INITIALIZE]: (state) => initialState,
+
     [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
       ...state,
       [key]: value,
@@ -64,14 +88,27 @@ const write = handleActions(
     }),
     [SET_ORIGINAL_POST]: (state, { payload: post }) => ({
       ...state,
-      title: post.title,
-      thumbnail: post.thumbnail,
-      content: post.content,
-      status: post.status,
-      originalPostId: post.originalPostId,
+      boardId: post.data.boardId,
+      title: post.data.title,
+      thumbnail: post.data.thumbnail,
+      content: post.data.content,
+      selected: false,
+      status: post.data.status,
+      originalPostId: post.data.postId,
+    }),
+    [UPDATE_POST_SUCCESS]: (state, { payload: post }) => ({
+      ...state,
+      post,
+    }),
+    [UPDATE_POST_FAILURE]: (state, { payload: postError }) => ({
+      ...state,
+      postError,
     }),
   },
-  initialState
+  initialState,
+  {
+    [INITIALERROR]: (state) => initialErrorr,
+  }
 );
 
 export default write;

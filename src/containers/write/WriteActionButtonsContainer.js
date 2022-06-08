@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import WriteActionButtons from "../../components/editor/WriteActionButtons";
 import { useSelector, useDispatch } from "../../../node_modules/react-redux/es/exports";
 import { useNavigate } from "../../../node_modules/react-router-dom/index";
-import { changefield, writePost } from "../../modules/write";
+import { changefield, writePost, initialError, updatePost } from "../../modules/write";
 import Reissue from "../../lib/api/auth";
 import client from "../../lib/api/client";
 
@@ -10,19 +10,21 @@ const WriteActionButtonsContainer = () => {
   // const [error, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { boardId, title, thumbnail, content, status, addresses, post, postError } = useSelector(({ write }) => ({
+  let { boardId, title, thumbnail, content, status, selected, addresses, post, postError, originalPostId } = useSelector(({ write }) => ({
     boardId: Number(write.boardId),
     title: write.title,
     thumbnail: write.thumbnail,
     content: write.content,
+    selected: write.selected,
     status: write.status,
     addresses: write.address,
     post: write.post,
     postError: write.postError,
+    originalPostId: write.originalPostId,
   }));
+
   const imageClear = async () => {
     const notIncludedAddresses = addresses.filter((addr) => !content.includes(addr));
-    console.log(notIncludedAddresses);
     const accessToken = localStorage.getItem("AccessToken");
 
     const response = await client.post("/api/v1/image/delete", notIncludedAddresses, {
@@ -58,10 +60,10 @@ const WriteActionButtonsContainer = () => {
         const response = await Reissue({ accessToken, refreshToken });
         console.log(response);
         if (response.status === 400) {
-          // setError("잠시 후 다시 시도해 주세요.");
+          // alert("잠시 후 다시 시도해 주세요.");
           return;
         } else if (response.status === 401) {
-          // setError("권한이 만료되었습니다. 다시 로그인해 주세요.");
+          alert("권한이 만료되었습니다. 다시 로그인해 주세요.");
           return;
         } else if (response.status === 200) {
           const tokenPair = response.headers.authorization;
@@ -93,36 +95,61 @@ const WriteActionButtonsContainer = () => {
   const onPublish = async () => {
     dispatch(changefield({ key: "status", value: true }));
     status = true;
+
+    if (originalPostId) {
+      dispatch(
+        updatePost({
+          id: originalPostId,
+          title,
+          thumbnail,
+          content,
+          selected,
+          status,
+        })
+      );
+      return;
+    }
+
     dispatch(
       writePost({
         boardId,
         title,
         thumbnail,
         content,
+        selected,
         status,
       })
     );
-    imageClear();
-    // addresses.map(async (a) => {
-
-    // })
   };
 
   const onTemporary = () => {
     dispatch(changefield({ key: "status", value: false }));
     status = false;
+
+    if (originalPostId) {
+      dispatch(
+        updatePost({
+          id: originalPostId,
+          title,
+          thumbnail,
+          content,
+          selected,
+          status,
+        })
+      );
+      return;
+    }
+
     dispatch(
       writePost({
         boardId,
         title,
         thumbnail,
         content,
+        selected,
         status,
       })
     );
-    imageClear();
-
-    // addresses.map(async (a) => {
 
     // })
   };
@@ -197,17 +224,40 @@ const WriteActionButtonsContainer = () => {
 
   useEffect(() => {
     if (post) {
+      if (originalPostId) {
+        const id = originalPostId;
+        navigate(`/${id}`);
+        imageClear();
+        return;
+      }
       const id = post.data.postId;
 
       console.log(id);
       navigate(`/${id}`);
+      imageClear();
     }
+
     if (postError) {
       if (postError.response.status === 400) {
         // setError("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        dispatch(initialError());
         return;
       }
 
+      if (postError.response.status === 422) {
+        if (postError.response.data.title) {
+          alert("제목을 입력하세요.");
+          dispatch(initialError());
+
+          return;
+        }
+        if (postError.response.data.content) {
+          alert("내용을 입력하세요.");
+          dispatch(initialError());
+
+          return;
+        }
+      }
       const accessToken = localStorage.getItem("AccessToken");
       const refreshToken = localStorage.getItem("RefreshToken");
 
@@ -218,7 +268,6 @@ const WriteActionButtonsContainer = () => {
 
       async function setReissue() {
         const response = await Reissue({ accessToken, refreshToken });
-        console.log(response);
         if (response.status === 400) {
           // setError("잠시 후 다시 시도해 주세요.");
           return;
@@ -233,12 +282,27 @@ const WriteActionButtonsContainer = () => {
           try {
             localStorage.setItem("AccessToken", accessToken);
 
+            if (originalPostId) {
+              dispatch(
+                updatePost({
+                  id: originalPostId,
+                  title,
+                  thumbnail,
+                  content,
+                  selected,
+                  status,
+                })
+              );
+              return;
+            }
+
             dispatch(
               writePost({
                 boardId,
                 title,
                 thumbnail,
                 content,
+                selected,
                 status,
               })
             );
@@ -251,9 +315,9 @@ const WriteActionButtonsContainer = () => {
 
       return;
     }
-  }, [navigate, post, postError, boardId, title, thumbnail, content, status, dispatch]);
+  }, [navigate, post, postError, boardId, title, thumbnail, content, selected, status, dispatch]); /* eslint-disable-line */
 
-  return <WriteActionButtons onPublish={onPublish} onCancel={onCancel} onTemporary={onTemporary} />;
+  return <WriteActionButtons onPublish={onPublish} onCancel={onCancel} onTemporary={onTemporary} isEdit={originalPostId} />;
 };
 
 export default WriteActionButtonsContainer;

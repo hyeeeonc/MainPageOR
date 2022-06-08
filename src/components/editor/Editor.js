@@ -64,7 +64,7 @@ const BottomContainer = styled.div`
   }
 `;
 
-const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
+const Editor = ({ title, content, thumbnail, BoardId, selected, onChangeField }) => {
   const quillElement = useRef(null);
   const quillInstance = useRef(null);
   const quillThumbElement = useRef(null);
@@ -183,7 +183,6 @@ const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
         });
 
         const IMG_URL = result.data.url;
-        addresses.push(IMG_URL);
 
         const quill = quillThumbInstance.current; // 에디터 객체 가져오기
         // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
@@ -224,7 +223,6 @@ const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
               });
 
               const IMG_URL = result.data.url;
-              addresses.push(IMG_URL);
 
               const quill = quillThumbInstance.current; // 에디터 객체 가져오기
               // quill.root.innerHTML = quill.root.innerHTML + `<img src=${IMG_URL} /><br/>`;
@@ -303,12 +301,24 @@ const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
     });
   }, [onChangeField]);
 
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+    quillInstance.current.root.innerHTML = content;
+    quillThumbInstance.current.root.innerHTML = thumbnail;
+  }, [content, thumbnail]);
+
   const onChangeTitle = (e) => {
     onChangeField({ key: "title", value: e.target.value });
   };
 
   const onChangeBoardId = (e) => {
     onChangeField({ key: "boardId", value: e.target.value });
+  };
+
+  const onChangeThumb = (e) => {
+    onChangeField({ key: "selected", value: e.target.checked });
   };
 
   return (
@@ -328,6 +338,7 @@ const Editor = ({ title, content, thumbnail, BoardId, onChangeField }) => {
           <option value="2">Concerts</option>
           <option value="3">Party</option>
         </select>
+        <input type="checkbox" name="selected" onChange={onChangeThumb} value={selected} /> Main Page Thumbnail 게시
       </BottomContainer>
 
       {/* <input type="checkbox" vlaue="2">

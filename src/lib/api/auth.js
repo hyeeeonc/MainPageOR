@@ -11,6 +11,22 @@ export const login = ({ id, pw }) =>
     }
   );
 
+export const logout = () => {
+  const accessToken = localStorage.getItem("AccessToken");
+  const refreshToken = localStorage.getItem("RefreshToken");
+  const setToken = accessToken + " " + refreshToken;
+  return client.post(
+    "/api/v1/admin/logout",
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: setToken,
+      },
+    }
+  );
+};
+
 export const register = ({ id, pw, name, email, phone, accessToken }) => {
   return client.post(
     "/api/v1/admin",
