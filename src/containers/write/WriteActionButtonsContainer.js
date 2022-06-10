@@ -34,65 +34,65 @@ const WriteActionButtonsContainer = () => {
       },
     });
 
-    if (response.status === 200) {
-      // navigate(-1);
+    // if (response.status === 200) {
+    //   navigate(-1);
 
-      return;
-    } else {
-      if (response.status === 400) {
-        // setError("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-        navigate(-1);
+    return;
+    // } else {
+    //   if (response.status === 400) {
+    //     // setError("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    //     navigate(-1);
 
-        return;
-      }
+    //     return;
+    //   }
 
-      const accessToken = localStorage.getItem("AccessToken");
-      const refreshToken = localStorage.getItem("RefreshToken");
+    //   const accessToken = localStorage.getItem("AccessToken");
+    //   const refreshToken = localStorage.getItem("RefreshToken");
 
-      if (!accessToken || !refreshToken) {
-        // setError("권한이 없습니다.");
-        navigate(-1);
+    //   if (!accessToken || !refreshToken) {
+    //     // setError("권한이 없습니다.");
+    //     navigate(-1);
 
-        return;
-      }
+    //     return;
+    //   }
 
-      async function setReissue() {
-        const response = await Reissue({ accessToken, refreshToken });
-        console.log(response);
-        if (response.status === 400) {
-          // alert("잠시 후 다시 시도해 주세요.");
-          return;
-        } else if (response.status === 401) {
-          alert("권한이 만료되었습니다. 다시 로그인해 주세요.");
-          return;
-        } else if (response.status === 200) {
-          const tokenPair = response.headers.authorization;
-          const tokens = tokenPair.split(" ");
-          const accessToken = tokens[0];
+    //   async function setReissue() {
+    //     const response = await Reissue({ accessToken, refreshToken });
+    //     console.log(response);
+    //     if (response.status === 400) {
+    //       // alert("잠시 후 다시 시도해 주세요.");
+    //       return;
+    //     } else if (response.status === 401) {
+    //       alert("권한이 만료되었습니다. 다시 로그인해 주세요.");
+    //       return;
+    //     } else if (response.status === 200) {
+    //       const tokenPair = response.headers.authorization;
+    //       const tokens = tokenPair.split(" ");
+    //       const accessToken = tokens[0];
 
-          try {
-            localStorage.setItem("AccessToken", accessToken);
+    //       try {
+    //         localStorage.setItem("AccessToken", accessToken);
 
-            const deleteApi = await client.post("/api/v1/image/delete", notIncludedAddresses, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: accessToken,
-              },
-            });
-            navigate(-1);
-          } catch (e) {
-            console.log("localStorage is not working");
-            navigate(-1);
-          }
-        }
-      }
-      setReissue();
+    //         const deleteApi = await client.post("/api/v1/image/delete", notIncludedAddresses, {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: accessToken,
+    //           },
+    //         });
+    //         navigate(-1);
+    //       } catch (e) {
+    //         console.log("localStorage is not working");
+    //         navigate(-1);
+    //       }
+    //     }
+    //   }
+    //   setReissue();
 
-      return;
-    }
+    //   return;
+    // }
   };
 
-  const onPublish = async () => {
+  const onPublish = () => {
     dispatch(changefield({ key: "status", value: true }));
     status = true;
 
@@ -157,19 +157,19 @@ const WriteActionButtonsContainer = () => {
   const onCancel = async () => {
     const accessToken = localStorage.getItem("AccessToken");
 
-    const response = await client.post("/api/v1/image/delete", addresses, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: accessToken,
-      },
-    });
+    try {
+      const response = await client.post("/api/v1/image/delete", addresses, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: accessToken,
+        },
+      });
 
-    if (response.status === 200) {
-      // navigate(-1);
-
-      return;
-    } else {
-      if (response.status === 400) {
+      if (response.status === 200) {
+        navigate(-1);
+      }
+    } catch (e) {
+      if (e.response.status === 400) {
         // setError("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
         navigate(-1);
 
@@ -188,12 +188,11 @@ const WriteActionButtonsContainer = () => {
 
       async function setReissue() {
         const response = await Reissue({ accessToken, refreshToken });
-        console.log(response);
         if (response.status === 400) {
           // setError("잠시 후 다시 시도해 주세요.");
           return;
         } else if (response.status === 401) {
-          // setError("권한이 만료되었습니다. 다시 로그인해 주세요.");
+          alert("권한이 만료되었습니다. 다시 로그인해 주세요.");
           return;
         } else if (response.status === 200) {
           const tokenPair = response.headers.authorization;
@@ -240,20 +239,20 @@ const WriteActionButtonsContainer = () => {
     if (postError) {
       if (postError.response.status === 400) {
         // setError("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-        dispatch(initialError());
+        dispatch(changefield({ key: "postError", value: null }));
         return;
       }
 
       if (postError.response.status === 422) {
         if (postError.response.data.title) {
           alert("제목을 입력하세요.");
-          dispatch(initialError());
+          dispatch(changefield({ key: "postError", value: null }));
 
           return;
         }
         if (postError.response.data.content) {
           alert("내용을 입력하세요.");
-          dispatch(initialError());
+          dispatch(changefield({ key: "postError", value: null }));
 
           return;
         }

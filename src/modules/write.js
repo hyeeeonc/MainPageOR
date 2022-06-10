@@ -31,8 +31,9 @@ export const writePost = createAction(WRITE_POST, ({ boardId, title, thumbnail, 
 
 export const setOriginalPost = createAction(SET_ORIGINAL_POST, (post) => post);
 
-export const updatePost = createAction(UPDATE_POST, ({ id, title, thumbnail, content, selected, status }) => ({
+export const updatePost = createAction(UPDATE_POST, ({ id, boardId, title, thumbnail, content, selected, status }) => ({
   id,
+  boardId,
   title,
   thumbnail,
   content,
@@ -107,7 +108,9 @@ const write = handleActions(
   },
   initialState,
   {
-    [INITIALERROR]: (state) => initialErrorr,
+    [INITIALERROR]: (state) => ({
+      initialError,
+    }),
   }
 );
 
