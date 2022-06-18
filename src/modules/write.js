@@ -1,5 +1,7 @@
 import { createAction, handleActions } from "redux-actions";
-import createRequestSaga, { createRequestActionTypes } from "../lib/createRequestSaga";
+import createRequestSaga, {
+  createRequestActionTypes,
+} from "../lib/createRequestSaga";
 import * as postsAPI from "../lib/api/posts";
 import { takeLatest } from "redux-saga/effects";
 
@@ -7,8 +9,10 @@ const INITIALIZE = "write/INITIALIZE";
 const INITIALERROR = "write/INITIALERROR";
 
 const CHANGE_FIELD = "write/CHANGE_FIELD";
-const [WRITE_POST, WRITE_POST_SUCCESS, WRITE_POST_FAILURE] = createRequestActionTypes("write/WRITE_POST");
-const [UPDATE_POST, UPDATE_POST_SUCCESS, UPDATE_POST_FAILURE] = createRequestActionTypes(`write/UPDATE_POST`);
+const [WRITE_POST, WRITE_POST_SUCCESS, WRITE_POST_FAILURE] =
+  createRequestActionTypes("write/WRITE_POST");
+const [UPDATE_POST, UPDATE_POST_SUCCESS, UPDATE_POST_FAILURE] =
+  createRequestActionTypes(`write/UPDATE_POST`);
 
 const SET_ORIGINAL_POST = `write_SET_ORIGINAL_POST`;
 
@@ -20,26 +24,32 @@ export const changefield = createAction(CHANGE_FIELD, ({ key, value }) => ({
   value,
 }));
 
-export const writePost = createAction(WRITE_POST, ({ boardId, title, thumbnail, content, selected, status }) => ({
-  boardId,
-  title,
-  thumbnail,
-  content,
-  selected,
-  status,
-}));
+export const writePost = createAction(
+  WRITE_POST,
+  ({ boardId, title, thumbnail, content, selected, status }) => ({
+    boardId,
+    title,
+    thumbnail,
+    content,
+    selected,
+    status,
+  })
+);
 
 export const setOriginalPost = createAction(SET_ORIGINAL_POST, (post) => post);
 
-export const updatePost = createAction(UPDATE_POST, ({ id, boardId, title, thumbnail, content, selected, status }) => ({
-  id,
-  boardId,
-  title,
-  thumbnail,
-  content,
-  selected,
-  status,
-}));
+export const updatePost = createAction(
+  UPDATE_POST,
+  ({ id, boardId, title, thumbnail, content, selected, status }) => ({
+    id,
+    boardId,
+    title,
+    thumbnail,
+    content,
+    selected,
+    status,
+  })
+);
 
 const writePostSaga = createRequestSaga(WRITE_POST, postsAPI.writePost);
 const updatePostSaga = createRequestSaga(UPDATE_POST, postsAPI.updatePost);

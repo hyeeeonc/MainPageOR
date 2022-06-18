@@ -1,6 +1,13 @@
 import client from "./client";
 
-export const writePost = ({ boardId, title, thumbnail, content, selected, status }) => {
+export const writePost = ({
+  boardId,
+  title,
+  thumbnail,
+  content,
+  selected,
+  status,
+}) => {
   const accessToken = localStorage.getItem("AccessToken");
   return client.post(
     "api/v1/posts",
@@ -35,11 +42,24 @@ export const listPosts = ({ size, page, boardId }) => {
   });
 };
 
-export const updatePost = ({ id, title, thumbnail, content, selected, status }) => {
+export const listPostsThumb = () => {
+  return client.get("api/v1/thumbnails");
+};
+
+export const updatePost = ({
+  id,
+  boardId,
+  title,
+  thumbnail,
+  content,
+  selected,
+  status,
+}) => {
   const accessToken = localStorage.getItem("AccessToken");
   return client.put(
     `api/v1/posts/${id}`,
     {
+      boardId,
       title,
       thumbnail,
       content,

@@ -1,16 +1,38 @@
 import styled from "styled-components";
 import qs from "qs";
 import Button from "../common/Button";
-
+const PaginationButton = styled(Button)`
+  font-size: 2rem;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  color: #999999;
+  :hover {
+    background-color: inherit;
+    color: #666666;
+  }
+  :disabled {
+    background-color: inherit;
+    color: #999999;
+  }
+`;
 const PaginationBlock = styled.div`
   width: 320px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 3rem;
 `;
 
-const PageNumber = styled.div``;
+const PageNumber = styled.div`
+  font-size: 2rem;
+  color: white;
+  text-align: center;
+  min-width: 40rem;
+  letter-spacing: 1rem;
+`;
 
 // const PageInput = styled.input`
 //   widdth = 0.5rem;
@@ -25,15 +47,19 @@ const buildLink = ({ page }) => {
 const Pagination = ({ page, lastPage }) => {
   return (
     <PaginationBlock>
-      <Button disabled={page === 1} to={page === 1 ? undefined : buildLink({ page: page - 1 })}>
-        이전
-      </Button>
-      <PageNumber>
-        {page} / {lastPage}
-      </PageNumber>
-      <Button disabled={page === lastPage} to={page === lastPage ? undefined : buildLink({ page: page + 1 })}>
-        다음
-      </Button>
+      <PaginationButton
+        disabled={page === 1}
+        to={page === 1 ? undefined : buildLink({ page: page - 1 })}
+      >
+        &lt;Down
+      </PaginationButton>
+      <PageNumber>{page + " | " + lastPage}</PageNumber>
+      <PaginationButton
+        disabled={page === lastPage}
+        to={page === lastPage ? undefined : buildLink({ page: page + 1 })}
+      >
+        Up&gt;
+      </PaginationButton>
     </PaginationBlock>
   );
 };

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import MainResponsive from "../common/MainResponsive";
 import Responsive from "../common/Responsive";
 import palette from "../../lib/styles/palette";
 import { Link } from "react-router-dom";
@@ -7,11 +8,12 @@ import { useEffect } from "react";
 const PostListBlock = styled(Responsive)`
   // margin-top: 3rem;
   // padding-top: 2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, max-content));
-  grid-gap: 30px;
-  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   padding: initial;
+  background-color: #181818;
 `;
 
 const ErrorBlock = styled.div`
@@ -26,7 +28,8 @@ const ErrorBlock = styled.div`
 
     .logof {
       font-weight: 900;
-      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff,
+        1px 1px 0 #fff;
     }
 
     .logob {
@@ -36,18 +39,21 @@ const ErrorBlock = styled.div`
   }
 `;
 
+const PostThumbItemBlock = styled.div``;
+
 const PostItemBlock = styled.div`
   padding-top: 3rem;
   padding-bottom: 3rem;
-  width: 300px;
-  // margin-right: 20px;
+  width: 235px;
+  margin-right: 47.5px;
+  margin-left: 47.5px;
   display: hidden;
 
   @media (max-width: 350px) {
     max-width: 100%;
   }
   .thumbnail {
-    max-width: 300px;
+    max-width: 235px;
     text-align: center;
     img {
       max-width: 100%;
@@ -55,28 +61,34 @@ const PostItemBlock = styled.div`
   }
 
   h6 {
-    margin-left: 10px;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: #1fc0e0;
+    margin: 1.4rem 0 1.4rem 0;
   }
+
   h2 {
-    margin-left: 10px;
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-bottom: 0;
     margin-top: 0;
+    color: white;
     &: hoaver {
       color: ${palette.gray[6]};
     }
   }
-
-  .cont {
-    margin-left: 10px;
-    margin-top: 2rem;
-  }
 `;
 
 const PostItem = ({ post }) => {
-  const { postId, boardId, title, thumbnail, content, addedDate, status, selected, views } = post;
+  const {
+    postId,
+    boardId,
+    title,
+    thumbnail,
+    content,
+    addedDate,
+    status,
+    selected,
+    views,
+  } = post;
 
   let events;
 
@@ -98,7 +110,10 @@ const PostItem = ({ post }) => {
   return (
     <PostItemBlock>
       <Link to={`/${postId}`}>
-        <div className="thumbnail" dangerouslySetInnerHTML={{ __html: thumbnail }}></div>
+        <div
+          className="thumbnail"
+          dangerouslySetInnerHTML={{ __html: thumbnail }}
+        ></div>
       </Link>
       <h6>{events}</h6>
 
@@ -129,12 +144,14 @@ const PostList = ({ posts, loading, error }) => {
 
   if (loading || !posts) {
     return (
-      <ErrorBlock>
-        <div to="/" className="logo">
-          <span className="logof">OKRA</span>
-          <span className="logob">SEOUL</span>
-        </div>
-      </ErrorBlock>
+      <MainResponsive>
+        <ErrorBlock>
+          <div to="/" className="logo">
+            <span className="logof">OKRA</span>
+            <span className="logob">SEOUL</span>
+          </div>
+        </ErrorBlock>
+      </MainResponsive>
     );
   }
 
